@@ -82,7 +82,7 @@ const Navbar = () => {
     e.preventDefault(); // Previene el comportamiento predeterminado del formulario
     if (searchQuery.trim() !== "") {
       // Redirige a la página de resultados con la búsqueda
-      navigate(`/song/${encodeURIComponent(searchQuery)}`);
+      navigate(`/app/songs/${encodeURIComponent(searchQuery)}`);
     } else {
       navigate(`/app/songs`);
     }
