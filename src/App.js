@@ -7,13 +7,13 @@ import {
 } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import SearchBar from "./components/SearchBar";
-import Tabs from "./components/Tabs";
-import Albums from "./components/Albums";
-import SongList from "./components/SongList";
-import PlayLists from "./components/Playlists";
+import Tabs from "./components/Songscomps/Tabs";
+import Albums from "./components/Songscomps/Albums";
+import SongList from "./components/Songscomps/SongList";
+import PlayLists from "./components/Songscomps/Playlists";
 import Player from "./components/Player";
-import Artists from "./components/Artists";
-import ArtistDetail from "./components/ArtistDetail";
+import Artists from "./components/Songscomps/Artists";
+import ArtistDetail from "./components/Songscomps/ArtistDetail";
 import Login from "./components/Login"; // Asegúrate de importar el componente Login
 import HomePage from "./pages/HomePage";
 import Explorer from "./pages/Explorer";

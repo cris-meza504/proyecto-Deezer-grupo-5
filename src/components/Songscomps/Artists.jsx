@@ -5,24 +5,23 @@ const artists = [
   {
     name: "Arctic Monkeys",
     fans: "2434 fans",
-    image: require("../img/images.jpeg"),
+    image: require("../../img/images.jpeg"),
   },
-  { name: "5050", fans: "1127 fans", image: require("../img/images.jpeg") },
+  { name: "5050", fans: "1127 fans", image: require("../../img/images.jpeg") },
   {
     name: "5050 Flow Malandro",
     fans: "2438 fans",
-    image: require("../img/images.jpeg"),
+    image: require("../../img/images.jpeg"),
   },
-  { name: "505 Games", fans: "70 fans", image: require("../img/images.jpeg") },
+  {
+    name: "505 Games",
+    fans: "70 fans",
+    image: require("../../img/images.jpeg"),
+  },
   {
     name: "5051Kartell",
     fans: "372 fans",
-    image: require("../img/images.jpeg"),
-  },
-  {
-    name: "50/50 Twin",
-    fans: "295 fans",
-    image: require("../img/images.jpeg"),
+    image: require("../../img/images.jpeg"),
   },
 ];
 

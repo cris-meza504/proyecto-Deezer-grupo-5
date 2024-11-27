@@ -8,7 +8,7 @@ const ArtistDetail = () => {
   const artistData = {
     name: artistName,
     fans: "2434 fans",
-    image: require("../img/images.jpeg"),
+    image: require("../../img/images.jpeg"),
   };
 
   return (

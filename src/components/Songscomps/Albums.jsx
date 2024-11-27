@@ -6,7 +6,7 @@ const albums = [
     title: "50//50",
     artist: "Vantage",
     releaseDate: "21/08/2020",
-    image: require("../img/505.jpeg"), // Cambia esto por la URL real de la imagen
+    image: require("../../img/505.jpeg"), // Cambia esto por la URL real de la imagen
   },
   {
     id: 2,

@@ -6,7 +6,7 @@ const playlist = [
     title: "alternative",
     numberSong: "20",
     releaseDate: "21/08/2020",
-    image: require("../img/505.jpeg"), // Cambia esto por la URL real de la imagen
+    image: require("../../img/505.jpeg"), // Cambia esto por la URL real de la imagen
   },
   {
     id: 2,
