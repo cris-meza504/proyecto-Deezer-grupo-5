@@ -14,10 +14,11 @@ import PlayLists from "./components/Songscomps/Playlists";
 import Player from "./components/Player";
 import Artists from "./components/Songscomps/Artists";
 import ArtistDetail from "./components/Songscomps/ArtistDetail";
-import Login from "./components/Login"; // Asegúrate de importar el componente Login
 import HomePage from "./pages/HomePage";
 import Explorer from "./pages/Explorer";
 import Favorites from "./pages/Favorites";
+import LoginComponent from "./components/logincomps/LoginComponent";
+import RegisterComponent from "./components/logincomps/RegisterComponent";
 
 function App() {
   // Estado para controlar si se deben mostrar las Tabs
@@ -78,7 +79,8 @@ export default function AppWithRouter() {
     <Router>
       <Routes>
         {/* Ruta de Login que se muestra en la raíz */}
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<LoginComponent />} />
+        <Route path="/register" element={<RegisterComponent />} />
         <Route path="/app/*" element={<App />} />{" "}
         {/* Rutas protegidas después de login */}
       </Routes>
