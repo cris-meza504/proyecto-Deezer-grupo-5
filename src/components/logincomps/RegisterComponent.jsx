@@ -82,11 +82,6 @@ const RegisterComponent = () => {
               >
                 Continuar
               </button>
-              <p className={styles.signupLink}>
-                <a href="/login" className={styles.emailSignup}>
-                  <strong>Registarse con número teléfono</strong>
-                </a>
-              </p>
             </form>
             <p className={styles.signupLink3}>
               Este sitio está protegido por reCAPTCHA. Se aplican{" "}

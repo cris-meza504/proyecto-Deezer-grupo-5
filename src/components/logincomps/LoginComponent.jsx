@@ -25,7 +25,7 @@ const LoginComponent = () => {
       </div>
       <div className={styles.loginContainer}>
         <div className={styles.loginCard}>
-          <h1 className={styles.title}>Acceso</h1>
+          <h1 className={styles.title}>Inciar Sección</h1>
           <form action="#" method="POST">
             <div className={styles.inputGroup}>
               <label htmlFor="country">países</label>
@@ -39,8 +39,12 @@ const LoginComponent = () => {
               </select>
             </div>
             <div className={styles.inputGroup}>
-              <label htmlFor="phone">Número de teléfono (+504)</label>
-              <input type="tel" id="phone" name="phone" required />
+              <label htmlFor="correo">Correo electrónico</label>
+              <input type="text" id="correo" name="correo" required />
+            </div>
+            <div className={styles.inputGroup}>
+              <label htmlFor="password">Contraseña</label>
+              <input type="password" id="password" name="password" required />
             </div>
             <button
               type="submit"
@@ -49,13 +53,6 @@ const LoginComponent = () => {
             >
               Acceso
             </button>
-            <p className={styles.signupLink}>
-              <a href="#" className={styles.emailSignup}>
-                <strong>
-                  Iniciar sesión con dirección de correo electrónico
-                </strong>
-              </a>
-            </p>
           </form>
         </div>
       </div>
