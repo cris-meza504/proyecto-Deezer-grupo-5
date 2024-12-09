@@ -169,6 +169,7 @@ const RegisterComponent = () => {
                   <option value="female">Femenino</option>
                   <option value="male">Masculino</option>
                   <option value="other">No binario</option>
+                  <option value="otros">Otros</option>
                 </select>
               </div>
               <div className={styles.buttonGroup}>
