@@ -57,16 +57,58 @@ const styles = {
     alignItems: "center",
     fontSize: "20px",
     cursor: "pointer",
+    position: "relative",
   },
   notificationIcon: {
     fontSize: "24px",
     cursor: "pointer",
+  },
+  dropdownMenu: {
+    position: "absolute",
+    top: "50px", // Ajusta según sea necesario
+    right: "0",
+    backgroundColor: "#333",
+    color: "#fff",
+    borderRadius: "8px",
+    width: "200px",
+    boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
+    zIndex: 20,
+    padding: "10px 0",
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+  },
+  dropdownItem: {
+    padding: "10px",
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    cursor: "pointer",
+    transition: "background-color 0.3s",
+  },
+  dropdownItemHover: {
+    backgroundColor: "#444",
+  },
+  userInfo: {
+    padding: "10px",
+    fontSize: "16px",
+    fontWeight: "bold",
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    backgroundColor: "#444",
+  },
+  userImage: {
+    width: "40px",
+    height: "40px",
+    borderRadius: "50%",
   },
 };
 
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState(""); // Almacena la búsqueda del usuario
   const [isFocused, setIsFocused] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false); // Controla la visibilidad del menú
   const navigate = useNavigate(); // Hook para redirigir
 
   const handleFocus = () => {
@@ -77,15 +119,22 @@ const Navbar = () => {
     setIsFocused(false);
   };
 
-  //Maneja las busquedas
   const handleSearchSubmit = (e) => {
     e.preventDefault(); // Previene el comportamiento predeterminado del formulario
     if (searchQuery.trim() !== "") {
-      // Redirige a la página de resultados con la búsqueda
       navigate(`/app/songs/${encodeURIComponent(searchQuery)}`);
     } else {
       navigate(`/app/songs`);
     }
+  };
+
+  const handleProfileClick = () => {
+    setMenuOpen(!menuOpen); // Alterna el estado del menú
+  };
+
+  const handleMenuItemClick = (path) => {
+    navigate(path); // Navega a la página correspondiente
+    setMenuOpen(false); // Cierra el menú después de hacer clic
   };
 
   return (
@@ -111,9 +160,49 @@ const Navbar = () => {
       </form>
       <div style={styles.profile}>
         <FaBell style={styles.notificationIcon} />
-        <div style={styles.profileIcon}>
-          <span>👤</span>
+        <div
+          style={styles.profileIcon}
+          onClick={handleProfileClick}
+        >
+          {/* Imagen de usuario */}
+          <img
+            src="/images/image8.jpg"// Ruta local en la carpeta public
+            alt="Usuario"
+            style={styles.userImage}
+          />
         </div>
+        {menuOpen && (
+          <div style={styles.dropdownMenu}>
+            <div style={styles.userInfo}
+            onClick={() => handleMenuItemClick("./favorites")}
+            >
+              <img
+                src="/images/image8.jpg" // Imagen de usuario
+                alt="Usuario"
+                style={styles.userImage}
+              />
+              <span>Juan Pérez</span>
+            </div>
+            <div
+              style={styles.dropdownItem}
+              onClick={() => handleMenuItemClick("./pages/account")}
+            >
+              <span>Ajustes de cuenta</span>
+            </div>
+            <div
+              style={styles.dropdownItem}
+              onClick={() => handleMenuItemClick("./pages/subscription")}
+            >
+              <span>Gestionar mi suscripción</span>
+            </div>
+            <div
+              style={styles.dropdownItem}
+              onClick={() => handleMenuItemClick("/")}
+            >
+              <span>Desconectarse</span>
+            </div>
+          </div>
+        )}
       </div>
     </header>
   );

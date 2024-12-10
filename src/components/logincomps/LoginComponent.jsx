@@ -3,9 +3,11 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import lbLogo from "../../img/lb.png";
 import styles from "../../css/Login.module.css"; // Asegúrate de tener tu CSS aquí
+import { useUser } from "../../context/UserContext";
 
 const LoginComponent = () => {
   const [email, setEmail] = useState("");
+  const { setUser } = useUser();
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // Para mostrar mensajes de error
   const navigate = useNavigate();
@@ -20,9 +22,11 @@ const LoginComponent = () => {
         correo: email,
         contrasenna: password,
       });
-
+      // Guardar el usuario en el contexto global
+      setUser(response.data);
       if (response.status === 200) {
         // Si las credenciales son correctas, redirigir a la página principal
+        console.log("Login exitoso:", response.data);
         navigate("/app/HomePage");
       }
     } catch (error) {
