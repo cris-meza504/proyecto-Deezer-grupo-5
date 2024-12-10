@@ -42,12 +42,13 @@ export default function Cancion() {
       {/* Información de la pista */}
       {song ? (
         <div style={styles.trackInfo}>
-          <span>{song.artista} - {song.titulo}</span>
+          
           <img 
             src={song.url_foto_portada || '/images/default-song.png'} 
             alt="Portada de la canción" 
             style={styles.songImage}
           />
+          <span>{song.artista}</span><span> {song.titulo}</span>
           <button style={styles.heartButton} onClick={toggleHeart}>
             <FaHeart style={{ color: isHearted ? '#FF4081' : '#fff' }} />
           </button>
