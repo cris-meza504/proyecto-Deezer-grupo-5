@@ -23,6 +23,7 @@ const LoginComponent = () => {
         contrasenna: password,
       });
       // Guardar el usuario en el contexto global
+      console.log("Datos de usuario:", response.data);
       setUser(response.data);
       if (response.status === 200) {
         // Si las credenciales son correctas, redirigir a la página principal

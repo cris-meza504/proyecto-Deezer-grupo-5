@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaSearch, FaBell } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../context/UserContext"; // Asegúrate de importar el contexto
 
 const styles = {
   navbar: {
@@ -65,7 +66,7 @@ const styles = {
   },
   dropdownMenu: {
     position: "absolute",
-    top: "50px", // Ajusta según sea necesario
+    top: "50px",
     right: "0",
     backgroundColor: "#333",
     color: "#fff",
@@ -77,6 +78,7 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     gap: "10px",
+    cursor: "pointer",
   },
   dropdownItem: {
     padding: "10px",
@@ -85,9 +87,6 @@ const styles = {
     gap: "10px",
     cursor: "pointer",
     transition: "background-color 0.3s",
-  },
-  dropdownItemHover: {
-    backgroundColor: "#444",
   },
   userInfo: {
     padding: "10px",
@@ -106,6 +105,7 @@ const styles = {
 };
 
 const Navbar = () => {
+  const { user } = useUser(); // Usamos el contexto para obtener el usuario
   const [searchQuery, setSearchQuery] = useState(""); // Almacena la búsqueda del usuario
   const [isFocused, setIsFocused] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false); // Controla la visibilidad del menú
@@ -166,32 +166,30 @@ const Navbar = () => {
         >
           {/* Imagen de usuario */}
           <img
-            src="/images/image8.jpg"// Ruta local en la carpeta public
+            src={user?.url_foto_perfil || "/images/default-profile.png"} // Usa la URL de la foto del perfil desde el usuario
             alt="Usuario"
             style={styles.userImage}
           />
         </div>
         {menuOpen && (
           <div style={styles.dropdownMenu}>
-            <div style={styles.userInfo}
-            onClick={() => handleMenuItemClick("./favorites")}
-            >
+            <div style={styles.userInfo} onClick={() => handleMenuItemClick("/favorites")}>
               <img
-                src="/images/image8.jpg" // Imagen de usuario
+                src={user?.url_foto_perfil || "/images/default-profile.png"} // Usa la URL de la foto del perfil desde el usuario
                 alt="Usuario"
                 style={styles.userImage}
               />
-              <span>Juan Pérez</span>
+              <span>{user?.nombre || "Usuario"}</span> {/* Usa el nombre correcto del usuario */}
             </div>
             <div
               style={styles.dropdownItem}
-              onClick={() => handleMenuItemClick("./pages/account")}
+              onClick={() => handleMenuItemClick("/pages/account")}
             >
               <span>Ajustes de cuenta</span>
             </div>
             <div
               style={styles.dropdownItem}
-              onClick={() => handleMenuItemClick("./pages/subscription")}
+              onClick={() => handleMenuItemClick("/pages/subscription")}
             >
               <span>Gestionar mi suscripción</span>
             </div>
