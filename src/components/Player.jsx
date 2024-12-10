@@ -307,11 +307,11 @@ const styles = {
     alignItems: "center",
   },
   playPauseIcon: {
-    fontSize: "13px", // Reducir el tamaño del icono
+    fontSize: "27px", // Reducir el tamaño del icono
     cursor: "pointer",
     backgroundColor: "#A238FF",
-    borderRadius: "50%", // Hace el botón circular
-    padding: "10px", // Reducir el padding para hacer el botón más pequeño
+    borderRadius: "60%", // Hace el botón circular
+    padding: "4px", // Reducir el padding para hacer el botón más pequeño
     transition: "transform 0.3s ease, color 0.3s ease",
   },
   icon: {

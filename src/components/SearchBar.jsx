@@ -94,7 +94,7 @@ const Navbar = () => {
         onSubmit={handleSearchSubmit}
         style={{
           ...styles.searchContainer,
-          border: isFocused ? "2px solid #A020F0" : "none",
+          border: isFocused ? "2px solid #A020F0" : "2px solid #29282D",
           background: isFocused ? "#3a393d" : "#29282D",
         }}
       >
