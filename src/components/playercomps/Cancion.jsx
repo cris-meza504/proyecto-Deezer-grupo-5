@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaHeart } from 'react-icons/fa';
 import { useUser } from '../../context/UserContext';
+import { useSong } from '../../context/SongContext'; // Importar el hook del contexto
 
 export default function Cancion() {
   const [isHearted, setIsHearted] = useState(false); // Estado para el botón de corazón
   const [isDisliked, setIsDisliked] = useState(false); // Estado para el botón de dislike
-  const [song, setSong] = useState(null); // Estado para almacenar la información de la canción
   const { user } = useUser(); // Obtener el usuario del contexto
+  const { currentSong, updateCurrentSong } = useSong(); // Usar el contexto de la canción
 
   const toggleHeart = () => {
     setIsHearted(!isHearted);
@@ -16,39 +17,49 @@ export default function Cancion() {
 
   // Obtener la última canción al cargar el componente
   useEffect(() => {
+    // Si ya tenemos la canción, no hacer la consulta
+    if (currentSong) return;
+
     if (user) {
-      // Imprimir el ID del usuario
       console.log('ID del usuario:', user.id);
 
       // Hacer la solicitud GET para obtener la última canción
       axios
         .get(`http://127.0.0.1:8000/last-song/${user.id}`)
-        .then((response) => {
-          // Imprimir la respuesta del backend
-          console.log('Respuesta del backend:', response.data);
-
-          // Actualizar el estado con los datos de la canción
-          setSong(response.data);
+            .then((response) => {
+            console.log('Respuesta del backend:', response.data);
+  
+            // Actualizar el estado con los datos de la canción
+            updateCurrentSong(response.data); // Actualizar la canción global
         })
         .catch((error) => {
-          // Manejar errores en la solicitud
           console.error('Error al obtener la canción:', error);
+
+          // Si no hay historial o ocurre un error, cargar la canción con ID 1
+          axios
+          .get('http://127.0.0.1:8000/song/1') // Cambiar esta URL para que apunte a la canción con ID = 1
+          .then((response) => {
+          console.log('Cargando canción predeterminada (ID 1):', response.data);
+          updateCurrentSong(response.data); // Actualizar con la canción ID 1
+            })
+            .catch((error) => {
+              console.error('Error al cargar la canción predeterminada:', error);
+            });
         });
     }
-  }, [user]); // Ejecutar solo cuando el usuario esté disponible
+  }, [user, currentSong, updateCurrentSong]); // Solo ejecutar si user está disponible y currentSong es null
 
   return (
     <>
       {/* Información de la pista */}
-      {song ? (
+      {currentSong ? (
         <div style={styles.trackInfo}>
-          
           <img 
-            src={song.url_foto_portada || '/images/default-song.png'} 
+            src={currentSong.url_foto_portada || '/images/default-song.png'} 
             alt="Portada de la canción" 
             style={styles.songImage}
           />
-          <span>{song.artista}</span><span> {song.titulo}</span>
+          <span>{currentSong.nombre_artista}</span><span> {currentSong.titulo}</span>
           <button style={styles.heartButton} onClick={toggleHeart}>
             <FaHeart style={{ color: isHearted ? '#FF4081' : '#fff' }} />
           </button>
@@ -67,7 +78,7 @@ const styles = {
     justifyContent: 'space-between',
     display: 'flex',
     width: '100%',
-    marginBottom: '20px',
+    marginBottom: '5px',
     paddingLeft: '20px',
     paddingRight: '550px',
   },

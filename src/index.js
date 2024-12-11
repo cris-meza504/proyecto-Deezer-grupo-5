@@ -1,15 +1,18 @@
 import React from "react";
 import { UserProvider } from "./context/UserContext"; // Ajusta la ruta según tu estructura de archivos
+import { SongProvider } from "./context/SongContext"; // Importa SongContext
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-//import Login from "./components/Login";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <UserProvider>
+    <SongProvider>
     <App />
+    </SongProvider>
+    
   </UserProvider>,
   document.getElementById("root")
 );
