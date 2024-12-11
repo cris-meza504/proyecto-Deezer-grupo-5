@@ -10,7 +10,7 @@ import {
 } from "react-icons/fa";
 
 export default function Reproductor() {
-  const { currentSong, playNextSong, playPreviousSong } = usePlaylist(); // Acceso al contexto global
+  const { currentSong, playNextSong, playPreviousSong, playlist, updateCurrentSong } = usePlaylist(); // Acceso al contexto global
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [isShuffling, setIsShuffling] = useState(false);
@@ -24,22 +24,30 @@ export default function Reproductor() {
     }
   }, [currentSong]);
 
-  // Simulación de avance del progreso
+  // Simulación de avance del progreso con manejo de shuffle y repeat
   useEffect(() => {
     let timer;
     if (isPlaying && currentSong) {
       timer = setInterval(() => {
         setProgress((prev) => {
           if (prev >= currentSong.duracion * 60) {
-            playNextSong(); // Pasa a la siguiente canción automáticamente
-            return 0;
+            if (isRepeating) {
+              return 0; // Reinicia la misma canción si está en modo repetición
+            } else if (isShuffling) {
+              const randomIndex = Math.floor(Math.random() * playlist.length);
+              updateCurrentSong(playlist[randomIndex]); // Selecciona una canción aleatoria
+              return 0; // Reinicia el progreso
+            } else {
+              playNextSong(); // Cambia a la siguiente canción
+              return 0;
+            }
           }
           return prev + 1;
         });
       }, 1000); // Incrementa cada segundo
     }
     return () => clearInterval(timer); // Limpia el intervalo
-  }, [isPlaying, currentSong, playNextSong]);
+  }, [isPlaying, currentSong, isRepeating, isShuffling, playNextSong, playlist, updateCurrentSong]);
 
   const togglePlayPause = () => {
     setIsPlaying(!isPlaying);

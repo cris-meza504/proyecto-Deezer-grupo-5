@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
 
 // Crear el contexto de la lista de reproducción
 const PlaylistContext = createContext();
@@ -37,6 +38,27 @@ export const PlaylistProvider = ({ children }) => {
 
     setCurrentSong(previousSong);
   };
+
+  // Efecto para guardar el historial cuando cambia la canción actual
+  useEffect(() => {
+    if (currentSong) {
+      // Realiza la solicitud para guardar la canción en el historial
+      const saveHistory = async () => {
+        try {
+          await axios.post("http://localhost:8000/insertar_historial/", {
+            codigo_usuario: 1, // Aquí debes usar el id del usuario actual
+            codigo_cancion: currentSong.codigo_cancion,
+            fecha: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
+          });
+          console.log("Historial guardado correctamente");
+        } catch (error) {
+          console.error("Error al guardar historial", error);
+        }
+      };
+      
+      saveHistory();
+    }
+  }, [currentSong]); // Solo se ejecutará cuando `currentSong` cambie
 
   return (
     <PlaylistContext.Provider
