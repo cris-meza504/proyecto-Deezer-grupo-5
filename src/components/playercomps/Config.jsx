@@ -224,11 +224,12 @@ const styles = {
       top: "-200px", // Mueve el menú hacia arriba
       left: "-130px", // Mueve el menú hacia la izquierda
       borderRadius: "8px",
-      width: "250px",
+      width: "220px",
       boxShadow: "0 4px 10px rgba(0, 0, 0, 0.2)",
     },
     option: {
       display: "flex",
+      fontSize:"12px",
       alignItems: "center",
       marginBottom: "8px",
       cursor: "pointer",
