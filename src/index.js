@@ -1,6 +1,6 @@
 import React from "react";
 import { UserProvider } from "./context/UserContext"; // Ajusta la ruta según tu estructura de archivos
-import { SongProvider } from "./context/SongContext"; // Importa SongContext
+import { PlaylistProvider } from "./context/PlaylistContext";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
@@ -9,9 +9,9 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <UserProvider>
-    <SongProvider>
+    <PlaylistProvider>
     <App />
-    </SongProvider>
+    </PlaylistProvider>
     
   </UserProvider>,
   document.getElementById("root")

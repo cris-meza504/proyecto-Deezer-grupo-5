@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaHeart } from 'react-icons/fa';
-import { useUser } from '../../context/UserContext';
-import { useSong } from '../../context/SongContext'; // Importar el hook del contexto
+import { useUser } from '../../context/UserContext'; // Importar el hook del contexto de usuario
+import { usePlaylist } from '../../context/PlaylistContext'; // Importar el hook del contexto de lista de reproducción
 
 export default function Cancion() {
   const [isHearted, setIsHearted] = useState(false); // Estado para el botón de corazón
   const [isDisliked, setIsDisliked] = useState(false); // Estado para el botón de dislike
   const { user } = useUser(); // Obtener el usuario del contexto
-  const { currentSong, updateCurrentSong } = useSong(); // Usar el contexto de la canción
+  const { currentSong, updateCurrentSong } = usePlaylist(); // Usar el contexto de la lista de reproducción
 
   const toggleHeart = () => {
     setIsHearted(!isHearted);
@@ -26,21 +26,21 @@ export default function Cancion() {
       // Hacer la solicitud GET para obtener la última canción
       axios
         .get(`http://127.0.0.1:8000/last-song/${user.id}`)
-            .then((response) => {
-            console.log('Respuesta del backend:', response.data);
-  
-            // Actualizar el estado con los datos de la canción
-            updateCurrentSong(response.data); // Actualizar la canción global
+        .then((response) => {
+          console.log('Respuesta del backend:', response.data);
+
+          // Actualizar el estado con los datos de la canción
+          updateCurrentSong(response.data); // Actualizar la canción global
         })
         .catch((error) => {
           console.error('Error al obtener la canción:', error);
 
           // Si no hay historial o ocurre un error, cargar la canción con ID 1
           axios
-          .get('http://127.0.0.1:8000/song/1') // Cambiar esta URL para que apunte a la canción con ID = 1
-          .then((response) => {
-          console.log('Cargando canción predeterminada (ID 1):', response.data);
-          updateCurrentSong(response.data); // Actualizar con la canción ID 1
+            .get('http://127.0.0.1:8000/song/1') // Cambiar esta URL para que apunte a la canción con ID = 1
+            .then((response) => {
+              console.log('Cargando canción predeterminada (ID 1):', response.data);
+              updateCurrentSong(response.data); // Actualizar con la canción ID 1
             })
             .catch((error) => {
               console.error('Error al cargar la canción predeterminada:', error);

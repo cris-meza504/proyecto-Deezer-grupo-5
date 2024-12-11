@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { usePlaylist } from "../../context/PlaylistContext"; // Importar el contexto
 
 const Albums2024 = () => {
   const [albums, setAlbums] = useState([]);
   const [hovered, setHovered] = useState(null);
   const [liked, setLiked] = useState([]);
+  const { updatePlaylist, updateCurrentSong } = usePlaylist();  // Usar el contexto para actualizar la playlist y la canción actual
 
   useEffect(() => {
     // Solicitar los datos al backend
@@ -26,6 +28,25 @@ const Albums2024 = () => {
     setLiked(updatedLikes);
   };
 
+  // Función para manejar el clic en el botón de reproducción
+  const handlePlay = (albumId) => {
+    // Obtener las canciones del álbum
+    axios
+      .get(`http://127.0.0.1:8000/album-songs/${albumId}`)  // Endpoint para obtener las canciones del álbum
+      .then((response) => {
+        const songs = response.data;  // Lista de canciones
+        updatePlaylist(songs);         // Actualizar la lista de reproducción global
+
+        // Seleccionar la primera canción del álbum para reproducir
+        if (songs && songs.length > 0) {
+          updateCurrentSong(songs[0]); // Establecer la canción actual
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching album songs:", error);
+      });
+  };
+
   return (
     <div style={styles.categoryContainer}>
       <h2 style={styles.categoryTitle}>Álbumes que marcaron el 2024</h2>
@@ -43,7 +64,12 @@ const Albums2024 = () => {
             >
               {hovered === index && (
                 <div style={styles.buttonsContainer}>
-                  <button style={styles.playButton}>▶</button>
+                  <button
+                    style={styles.playButton}
+                    onClick={() => handlePlay(album.codigo_album)}  // Llamada al handlePlay
+                  >
+                    ▶
+                  </button>
                   <button
                     style={{
                       ...styles.likeButton,
