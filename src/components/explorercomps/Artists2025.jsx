@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';  // Asegúrate de tener axios instalado
+import axios from 'axios'; // Asegúrate de tener axios instalado
+import { usePlaylist } from '../../context/PlaylistContext'; // Importar el contexto
 
 const Artists2025 = () => {
-  const [artists, setArtists] = useState([]);  // Estado para almacenar los artistas
+  const [artists, setArtists] = useState([]); // Estado para almacenar los artistas
   const [hovered, setHovered] = useState(null);
-  const [liked, setLiked] = useState(Array(5).fill(false));
+  const [liked, setLiked] = useState([]);
+  const { updatePlaylist, updateCurrentSong } = usePlaylist(); // Usar el contexto para actualizar la playlist y la canción actual
 
   // Función para obtener los artistas desde el backend
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/artist-stats')  // Aquí pon la URL correcta de tu backend
-      .then(response => {
-        setArtists(response.data);  // Actualizar el estado con los artistas obtenidos
+    axios
+      .get('http://127.0.0.1:8000/artist-stats') // Aquí pon la URL correcta de tu backend
+      .then((response) => {
+        setArtists(response.data); // Actualizar el estado con los artistas obtenidos
+        setLiked(Array(response.data.length).fill(false)); // Inicializar el estado de "me gusta" para cada artista
       })
-      .catch(error => {
-        console.error("Error al obtener los artistas:", error);
+      .catch((error) => {
+        console.error('Error al obtener los artistas:', error);
       });
   }, []);
 
@@ -23,12 +27,33 @@ const Artists2025 = () => {
     setLiked(updatedLikes);
   };
 
+
+  // Función para manejar el clic en el botón de reproducción
+  const handlePlay = (artistId) => {
+    // Obtener las canciones del artista
+    axios
+      .get(`http://127.0.0.1:8000/artist-songs/${artistId}`) // Endpoint para obtener las canciones del artista
+      .then((response) => {
+        const songs = response.data; // Lista de canciones
+        updatePlaylist(songs); // Actualizar la lista de reproducción global
+
+        // Seleccionar la primera canción para reproducir
+        if (songs && songs.length > 0) {
+          updateCurrentSong(songs[0]); // Establecer la canción actual
+        }
+      })
+      .catch((error) => {
+        console.log("Artist songs:", artistId);
+        console.error('Error fetching artist songs:', error);
+      });
+  };
+
   return (
     <div style={styles.categoryContainer}>
       <h2 style={styles.categoryTitle}>Artistas que no debes perderte en 2025</h2>
       <div style={styles.squaresContainer}>
         {artists.slice(0, 5).map((artist, index) => (
-          <div key={index} style={styles.squareItem}>
+          <div key={artist.id} style={styles.squareItem}>
             <div
               style={{
                 ...styles.square,
@@ -40,14 +65,19 @@ const Artists2025 = () => {
             >
               {hovered === index && (
                 <div style={styles.buttonsContainer}>
-                  <button style={styles.playButton}>▶</button>
+                  <button
+                    style={styles.playButton}
+                    onClick={() => handlePlay(artist.codigo_artista)} // Llamada a handlePlay con el ID del artista
+                  >
+                    ▶
+                  </button>
                   <button
                     style={{
                       ...styles.likeButton,
                       color: liked[index] ? '#B560FF' : '#000000',
                     }}
                     onClick={(e) => {
-                      e.stopPropagation();  // Evita que el evento afecte al hover
+                      e.stopPropagation(); // Evita que el evento afecte al hover
                       toggleLike(index);
                     }}
                   >
