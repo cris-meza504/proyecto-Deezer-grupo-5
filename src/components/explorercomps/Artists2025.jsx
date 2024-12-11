@@ -1,16 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';  // Asegúrate de tener axios instalado
 
 const Artists2025 = () => {
-  const artists = [
-    { name: 'Rising Pop', description: '80 canciones - 80.575 fans', img: '/images/image13.jpg' },
-    { name: 'R&B New Faces', description: '52 canciones - 231.626 fans', img: '/images/image14.jpg' },
-    { name: 'Nueva Ola', description: '50 canciones - 132.737 fans', img: '/images/image15.jpg' },
-    { name: 'Beats Of Tomorrow', description: '30 canciones - 189 fans', img: '/images/image16.jpg' },
-    { name: 'bloom', description: '44 canciones - 188 fans', img: '/images/image17.jpg' },
-  ];
-
+  const [artists, setArtists] = useState([]);  // Estado para almacenar los artistas
   const [hovered, setHovered] = useState(null);
-  const [liked, setLiked] = useState(Array(artists.length).fill(false));
+  const [liked, setLiked] = useState(Array(5).fill(false));
+
+  // Función para obtener los artistas desde el backend
+  useEffect(() => {
+    axios.get('http://127.0.0.1:8000/artist-stats')  // Aquí pon la URL correcta de tu backend
+      .then(response => {
+        setArtists(response.data);  // Actualizar el estado con los artistas obtenidos
+      })
+      .catch(error => {
+        console.error("Error al obtener los artistas:", error);
+      });
+  }, []);
 
   const toggleLike = (index) => {
     const updatedLikes = [...liked];
@@ -22,12 +27,12 @@ const Artists2025 = () => {
     <div style={styles.categoryContainer}>
       <h2 style={styles.categoryTitle}>Artistas que no debes perderte en 2025</h2>
       <div style={styles.squaresContainer}>
-        {artists.map((artist, index) => (
+        {artists.slice(0, 5).map((artist, index) => (
           <div key={index} style={styles.squareItem}>
             <div
               style={{
                 ...styles.square,
-                backgroundImage: `url(${process.env.PUBLIC_URL + artist.img})`,
+                backgroundImage: `url(${process.env.PUBLIC_URL + artist.url_foto})`,
                 filter: hovered === index ? 'brightness(75%)' : 'brightness(100%)',
               }}
               onMouseEnter={() => setHovered(index)}
@@ -42,7 +47,7 @@ const Artists2025 = () => {
                       color: liked[index] ? '#B560FF' : '#000000',
                     }}
                     onClick={(e) => {
-                      e.stopPropagation(); // Evita que el evento afecte al hover
+                      e.stopPropagation();  // Evita que el evento afecte al hover
                       toggleLike(index);
                     }}
                   >
@@ -52,11 +57,12 @@ const Artists2025 = () => {
               )}
             </div>
             <div style={styles.artistInfo}>
-              <span style={styles.artistName}>{artist.name}</span>
-              
+              <span style={styles.artistName}>{artist.nombre_artista}</span>
             </div>
             <div>
-            <span style={styles.artistDescription}>{artist.description}</span>
+              <span style={styles.artistDescription}>
+                {artist.cantidad_cancion} canciones - {artist.fans} fans
+              </span>
             </div>
           </div>
         ))}
@@ -81,7 +87,7 @@ const styles = {
     gap: '20px',
   },
   squareItem: {
-    width: '250px', // Tamaño de cada cuadrado
+    width: '250px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -91,7 +97,7 @@ const styles = {
     height: '250px',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    borderRadius: '10px', // Esquinas redondeadas
+    borderRadius: '10px',
     transition: 'filter 0.3s ease',
     position: 'relative',
   },
