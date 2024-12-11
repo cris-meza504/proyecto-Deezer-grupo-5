@@ -19,6 +19,7 @@ import Explorer from "./pages/Explorer";
 import Favorites from "./pages/Favorites";
 import LoginComponent from "./components/logincomps/LoginComponent";
 import RegisterComponent from "./components/logincomps/RegisterComponent";
+import UserComponent from "./components/usercomps/UserComponent";
 
 function App() {
   // Estado para controlar si se deben mostrar las Tabs
@@ -64,6 +65,7 @@ function App() {
               <Route path="/playlists" element={<PlayLists />} />
               <Route path="/artists" element={<Artists />} />
               <Route path="/artist/:artistName" element={<ArtistDetail />} />
+              <Route path="/pages/account" element={<UserComponent />} />
             </Routes>
           </div>
         </div>
