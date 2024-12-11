@@ -1,41 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const AlbumsOfTheWeek = () => {
-  const albums = [
-    { 
-      name: 'Shawn', 
-      artist: 'de Shawn Mendes', 
-      releaseDate: 'Publicado el 15/11/2024',
-      img: '/images/image20.jpg' 
-    },
-    { 
-      name: 'Bouquet', 
-      artist: 'de Gwen Stefani', 
-      releaseDate: 'Publicado el 15/11/2024',
-      img: '/images/image21.jpg' 
-    },
-    { 
-      name: 'From Zero', 
-      artist: 'de Linkin Park', 
-      releaseDate: 'Publicado el 15/11/2024',
-      img: '/images/image22.jpg' 
-    },
-    { 
-      name: 'The R♾️ts', 
-      artist: 'de Marshmello', 
-      releaseDate: 'Publicado el 15/11/2024',
-      img: '/images/image23.jpg' 
-    },
-    { 
-      name: 'Cosa Nuestra', 
-      artist: 'de Rauw Alejandro', 
-      releaseDate: 'Publicado el 15/11/2024',
-      img: '/images/image24.jpg' 
-    },
-  ];
-
+  const [albums, setAlbums] = useState([]);
   const [hovered, setHovered] = useState(null);
-  const [liked, setLiked] = useState(Array(albums.length).fill(false));
+  const [liked, setLiked] = useState([]);
+
+  // Obtener los álbumes más recientes desde el backend
+  useEffect(() => {
+    axios.get('http://127.0.0.1:8000/top-5-albumes-recientes')
+      .then((response) => {
+        setAlbums(response.data);
+        setLiked(Array(response.data.length).fill(false));  // Inicializar el estado de "me gusta" para cada álbum
+      })
+      .catch((error) => {
+        console.error("Error al obtener los álbumes:", error);
+      });
+  }, []);
 
   const toggleLike = (index) => {
     const updatedLikes = [...liked];
@@ -49,11 +30,11 @@ const AlbumsOfTheWeek = () => {
       <p style={styles.categoryDescription}>Recomendados por nuestros expertos</p>
       <div style={styles.squaresContainer}>
         {albums.map((album, index) => (
-          <div key={index} style={styles.squareItem}>
+          <div key={album.codigo_album} style={styles.squareItem}>
             <div
               style={{
                 ...styles.square,
-                backgroundImage: `url(${process.env.PUBLIC_URL + album.img})`,
+                backgroundImage: `url(${process.env.PUBLIC_URL + album.url_portada})`,
                 filter: hovered === index ? 'brightness(75%)' : 'brightness(100%)',
               }}
               onMouseEnter={() => setHovered(index)}
@@ -78,9 +59,11 @@ const AlbumsOfTheWeek = () => {
               )}
             </div>
             <div style={styles.albumInfo}>
-              <div style={styles.albumName}>{album.name}</div>
-              <div style={styles.albumArtist}>{album.artist}</div>
-              <div style={styles.albumReleaseDate}>{album.releaseDate}</div>
+              <div style={styles.albumName}>{album.titulo}</div>
+              <div style={styles.albumArtist}>{album.nombre_artista}</div>
+              <div style={styles.albumReleaseDate}>
+                {`Publicado el ${new Date(album.fecha_lanzamiento).toLocaleDateString('es-ES')}`}
+              </div>
             </div>
           </div>
         ))}

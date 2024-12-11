@@ -1,41 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const Albums2024 = () => {
-  const albums = [
-    {
-      name: "LOOM",
-      artist: "Imagine Dragons",
-      releaseDate: "Publicado el 28/06/2024",
-      img: "/images/image16.jpg",
-    },
-    {
-      name: "Reasonable Woman",
-      artist: "Sia",
-      releaseDate: "Publicado el 03/05/2024",
-      img: "/images/image17.jpg",
-    },
-    {
-      name: "Radical Optimism",
-      artist: "Dua Lipa",
-      releaseDate: "Publicado el 03/05/2024",
-      img: "/images/image18.jpg",
-    },
-    {
-      name: "Fireworks & Rollerblades",
-      artist: "Benson Boone",
-      releaseDate: "Publicado el 26/07/2024",
-      img: "/images/image19.jpg",
-    },
-    {
-      name: "Lose Control (Alt. Versions)",
-      artist: "Teddy Swims",
-      releaseDate: "Publicado el 29/02/2024",
-      img: "/images/image20.jpg",
-    },
-  ];
-
+  const [albums, setAlbums] = useState([]);
   const [hovered, setHovered] = useState(null);
-  const [liked, setLiked] = useState(Array(albums.length).fill(false));
+  const [liked, setLiked] = useState([]);
+
+  useEffect(() => {
+    // Solicitar los datos al backend
+    const fetchAlbums = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/top-albumes-reproducidos");
+        setAlbums(response.data);
+        setLiked(Array(response.data.length).fill(false)); // Inicializar el estado de "likes"
+      } catch (error) {
+        console.error("Error fetching albums:", error);
+      }
+    };
+    fetchAlbums();
+  }, []);
 
   const toggleLike = (index) => {
     const updatedLikes = [...liked];
@@ -48,13 +31,12 @@ const Albums2024 = () => {
       <h2 style={styles.categoryTitle}>Álbumes que marcaron el 2024</h2>
       <div style={styles.squaresContainer}>
         {albums.map((album, index) => (
-          <div key={index} style={styles.squareItem}>
+          <div key={album.codigo_album} style={styles.squareItem}>
             <div
               style={{
                 ...styles.square,
-                backgroundImage: `url(${process.env.PUBLIC_URL + album.img})`,
-                filter:
-                  hovered === index ? "brightness(75%)" : "brightness(100%)",
+                backgroundImage: `url(${process.env.PUBLIC_URL + album.url_portada})`,
+                filter: hovered === index ? "brightness(75%)" : "brightness(100%)",
               }}
               onMouseEnter={() => setHovered(index)}
               onMouseLeave={() => setHovered(null)}
@@ -78,9 +60,9 @@ const Albums2024 = () => {
               )}
             </div>
             <div style={styles.albumInfo}>
-              <div style={styles.albumName}>{album.name}</div>
-              <div style={styles.albumArtist}>{album.artist}</div>
-              <div style={styles.albumReleaseDate}>{album.releaseDate}</div>
+              <div style={styles.albumName}>{album.titulo}</div>
+              <div style={styles.albumArtist}>{album.nombre_artista}</div>
+              <div style={styles.albumReleaseDate}>{album.fecha_lanzamiento}</div>
             </div>
           </div>
         ))}
@@ -105,7 +87,7 @@ const styles = {
     gap: "20px",
   },
   squareItem: {
-    width: "250px", // Tamaño de cada cuadrado
+    width: "250px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -115,7 +97,7 @@ const styles = {
     height: "250px",
     backgroundSize: "cover",
     backgroundPosition: "center",
-    borderRadius: "10px", // Esquinas redondeadas
+    borderRadius: "10px",
     transition: "filter 0.3s ease",
     position: "relative",
   },
