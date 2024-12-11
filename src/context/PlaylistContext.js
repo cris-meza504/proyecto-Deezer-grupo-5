@@ -1,11 +1,13 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 import axios from "axios";
+import { useUser } from "./UserContext"; // Importa el contexto de usuario
 
 // Crear el contexto de la lista de reproducción
 const PlaylistContext = createContext();
 
 // Componente proveedor para envolver la aplicación
 export const PlaylistProvider = ({ children }) => {
+  const { user } = useUser(); // Accede al usuario actual desde el contexto
   const [currentSong, setCurrentSong] = useState(null); // Estado global para la canción actual
   const [playlist, setPlaylist] = useState([]); // Estado global para la lista de reproducción
 
@@ -41,12 +43,12 @@ export const PlaylistProvider = ({ children }) => {
 
   // Efecto para guardar el historial cuando cambia la canción actual
   useEffect(() => {
-    if (currentSong) {
+    if (currentSong && user) {  // Asegurarse de que hay una canción actual y un usuario
       // Realiza la solicitud para guardar la canción en el historial
       const saveHistory = async () => {
         try {
-          await axios.post("http://localhost:8000/insertar_historial/", {
-            codigo_usuario: 1, // Aquí debes usar el id del usuario actual
+          await axios.post("http://localhost:8000/historial/", {
+            codigo_usuario: user.codigo_usuario, // Usar el id del usuario desde el contexto
             codigo_cancion: currentSong.codigo_cancion,
             fecha: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
           });
@@ -58,7 +60,7 @@ export const PlaylistProvider = ({ children }) => {
       
       saveHistory();
     }
-  }, [currentSong]); // Solo se ejecutará cuando `currentSong` cambie
+  }, [currentSong, user]); // Solo se ejecutará cuando `currentSong` cambie y haya un usuario
 
   return (
     <PlaylistContext.Provider
