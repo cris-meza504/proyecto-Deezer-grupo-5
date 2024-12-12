@@ -1,52 +1,91 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
 function SongList() {
-  const songs = [
-    {
-      title: "505",
-      artist: "Arctic Monkeys",
-      album: "Favourite Worst Nightmare",
-      duration: "4:13",
-      popularity: 5,
-    },
-    {
-      title: "50/50",
-      artist: "La Ross Maria",
-      album: "50/50",
-      duration: "3:46",
-      popularity: 4,
-    },
-    {
-      title: "50/50",
-      artist: "Vantage",
-      album: "50/50",
-      duration: "4:06",
-      popularity: 3,
-    },
-  ];
+  const { searchQuery } = useParams(); // Obtener el término de búsqueda desde la URL
+  const [songs, setSongs] = useState([]); // Estado para almacenar las canciones
+  const [loading, setLoading] = useState(true); // Estado para indicar carga
+  const [error, setError] = useState(""); // Estado para manejar errores
+
+  useEffect(() => {
+    // Función para obtener las canciones del backend
+    const fetchSongs = async () => {
+      try {
+        setLoading(true); // Iniciar carga
+        setError(""); // Limpiar errores previos
+
+        // Construir la URL con el término de búsqueda
+        const url = searchQuery
+          ? `http://127.0.0.1:8000/searching?search=${encodeURIComponent(searchQuery)}`
+          : `http://127.0.0.1:8000/searching`;
+
+        // Hacer la solicitud al backend
+        const response = await axios.get(url);
+
+        // Actualizar el estado con las canciones obtenidas
+        setSongs(response.data.songs || []); // Asume que el backend devuelve un objeto con un campo "songs"
+      } catch (err) {
+        // Manejar errores de la solicitud
+        setError("Hubo un error al cargar las canciones. Inténtalo de nuevo.");
+      } finally {
+        setLoading(false); // Finalizar carga
+      }
+    };
+
+    fetchSongs(); // Llamar a la función para obtener las canciones
+  }, [searchQuery]); // Ejecutar cuando cambie el término de búsqueda
 
   return (
     <div className="bg-black text-white flex-grow px-4 py-2">
-      <table className="w-full text-left">
-        <thead>
-          <tr>
-            <th className="p-2">Canción</th>
-            <th className="p-2">Artista</th>
-            <th className="p-2">Álbum</th>
-            <th className="p-2">Duración</th>
-          </tr>
-        </thead>
-        <tbody>
-          {songs.map((song, index) => (
-            <tr key={index} className="hover:bg-gray-800">
-              <td className="p-2">{song.title}</td>
-              <td className="p-2">{song.artist}</td>
-              <td className="p-2">{song.album}</td>
-              <td className="p-2">{song.duration}</td>
+      <h1 className="text-xl mb-4">
+        {searchQuery ? `Resultados para: "${searchQuery}"` : "Todas las Canciones"}
+      </h1>
+
+      {/* Mostrar estado de carga */}
+      {loading && <p>Cargando canciones...</p>}
+
+      {/* Mostrar errores */}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      {/* Mostrar la tabla de canciones */}
+      {!loading && !error && (
+        <table className="w-full text-left">
+          <thead>
+            <tr>
+              <th className="p-2">Canción</th>
+              <th className="p-2">Artista</th>
+              <th className="p-2">Álbum</th>
+              <th className="p-2">Duración</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {songs.length > 0 ? (
+              songs.map((song) => (
+                <tr key={song.id} className="hover:bg-gray-800">
+                  <td className="p-2 flex items-center">
+                    <img
+                      src={song.cover_url}
+                      alt={song.title}
+                      className="w-10 h-10 mr-2"
+                    />
+                    {song.title}
+                  </td>
+                  <td className="p-2">{song.artist}</td>
+                  <td className="p-2">{song.album}</td>
+                  <td className="p-2">{song.duration.toFixed(2)} mins</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" className="text-center p-4">
+                  No se encontraron resultados para "{searchQuery}"
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }

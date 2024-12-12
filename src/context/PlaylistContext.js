@@ -42,17 +42,19 @@ export const PlaylistProvider = ({ children }) => {
 
   // Efecto para guardar el historial cuando cambia la canción actual
   useEffect(() => {
+    const cod_user = parseInt(localStorage.getItem("aristo"))
     if (currentSong && user) {  // Asegurarse de que hay una canción actual y un usuario
       // Realiza la solicitud para guardar la canción en el historial
       const saveHistory = async () => {
+
         try {
           await axios.post("http://localhost:8000/historial", {
-            codigo_usuario: localStorage.getItem("aristo"), // Usar el id del usuario desde el contexto
-            codigo_cancion: currentSong.codigo_cancion,
+            user_id: 1, // Usar el id del usuario desde el contexto
+            song_id: 2,
           });
           console.log("Historial guardado correctamente");
         } catch (error) {
-          console.error("Error al guardar historial", error);
+          console.error("Error al guardar historial", error, cod_user, "aaa:", currentSong.codigo_cancion);
         }
       };
       

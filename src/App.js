@@ -60,6 +60,7 @@ function App() {
               <Route path="/HomePage" element={<HomePage />} />
               <Route path="/explore" element={<Explorer />} />
               <Route path="/favorites" element={<Favorites />} />
+              <Route path="/songs/:searchQuery" element={<SongList />} />
               <Route path="/songs" element={<SongList />} />
               <Route path="/albums" element={<Albums />} />
               <Route path="/playlists" element={<PlayLists />} />
