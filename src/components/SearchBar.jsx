@@ -162,10 +162,7 @@ const Navbar = () => {
       </form>
       <div style={styles.profile}>
         <FaBell style={styles.notificationIcon} />
-        <div
-          style={styles.profileIcon}
-          onClick={handleProfileClick}
-        >
+        <div style={styles.profileIcon} onClick={handleProfileClick}>
           {/* Imagen de usuario */}
           <img
             src={user?.url_foto_perfil || "/images/default-profile.png"} // Usa la URL de la foto del perfil desde el usuario
@@ -175,17 +172,21 @@ const Navbar = () => {
         </div>
         {menuOpen && (
           <div style={styles.dropdownMenu}>
-            <div style={styles.userInfo} onClick={() => handleMenuItemClick("/favorites")}>
+            <div
+              style={styles.userInfo}
+              onClick={() => handleMenuItemClick("/favorites")}
+            >
               <img
                 src={user?.url_foto_perfil || "/images/default-profile.png"} // Usa la URL de la foto del perfil desde el usuario
                 alt="Usuario"
                 style={styles.userImage}
               />
-              <span>{user?.nombre || "Usuario"}</span> {/* Usa el nombre correcto del usuario */}
+              <span>{user?.nombre || "Usuario"}</span>{" "}
+              {/* Usa el nombre correcto del usuario */}
             </div>
             <div
               style={styles.dropdownItem}
-              onClick={() => handleMenuItemClick("/pages/account")}
+              onClick={() => handleMenuItemClick("/app/pages/account")}
             >
               <span>Ajustes de cuenta</span>
             </div>
