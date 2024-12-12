@@ -7,7 +7,7 @@ export default function Config() {
   const [isMuted, setIsMuted] = useState(false);
   const [showVolume, setShowVolume] = useState(false); // Estado para mostrar/ocultar la barra de volumen
   const [isDisliked, setIsDisliked] = useState(false); // Estado para el botón de dislike
-  const [isHearted, setIsHearted] = useState(false); // Estado para el botón de corazón
+  const [ setIsHearted] = useState(false); // Estado para el botón de corazón
   const [isConfigActive, setIsConfigActive] = useState(false); // Estado para el botón de configuración
   const [soundQuality, setSoundQuality] = useState("128kb/s"); // Estado para la calidad de sonido
   const [normalizeAudio, setNormalizeAudio] = useState(false); // Estado para normalizar audio

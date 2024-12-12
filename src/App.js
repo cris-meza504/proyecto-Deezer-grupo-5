@@ -72,6 +72,7 @@ function App() {
       <Player />
     </div>
   );
+  
 }
 
 export default function AppWithRouter() {

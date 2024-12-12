@@ -14,30 +14,26 @@ const LoginComponent = () => {
 
 
   const handleLogin = async (e) => {
-    e.preventDefault(); // Prevenir recarga de página al enviar el formulario
-
+    e.preventDefault();
     try {
-      // Realizar la solicitud POST con Axios
       const response = await axios.post("http://127.0.0.1:8000/login", {
         correo: email,
         contrasenna: password,
       });
-      // Guardar el usuario en el contexto global
-      console.log("Datos de usuario:", response.data);
-      setUser(response.data);
+  
       if (response.status === 200) {
-        // Si las credenciales son correctas, redirigir a la página principal
-        console.log("Login exitoso:", response.data);
-        navigate("/app/HomePage");
+        console.log("Datos de usuario:", response.data); // Esto debería mostrar el objeto con id, nombre, y url_foto_perfil
+        localStorage.setItem("aristo", response.data.id);
+        setUser(response.data); // Guardar los datos en el contexto global
+        navigate("/app/HomePage"); // Redirigir
       }
     } catch (error) {
-      if (error.response) {
-        // Si hay una respuesta con un error de la API (404, 401, etc.)
-        setError(error.response.data.detail);
-      } else {
-        // Si hay un error de red o algo inesperado
-        setError("No se pudo conectar al servidor. Intenta más tarde.");
-      }
+      console.error("Error al iniciar sesión:", error);
+      setError(
+        error.response
+          ? error.response.data.detail
+          : "No se pudo conectar al servidor. Intenta más tarde."
+      );
     }
   };
 

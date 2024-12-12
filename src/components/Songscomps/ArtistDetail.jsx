@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import artistImage from "../../img/images.jpeg";
-import imagen from "../../img/505.jpeg";
 
 const ArtistDetail = () => {
   const { artistName } = useParams();

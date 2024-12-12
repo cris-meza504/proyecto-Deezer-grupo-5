@@ -10,7 +10,6 @@ export const PlaylistProvider = ({ children }) => {
   const { user } = useUser(); // Accede al usuario actual desde el contexto
   const [currentSong, setCurrentSong] = useState(null); // Estado global para la canción actual
   const [playlist, setPlaylist] = useState([]); // Estado global para la lista de reproducción
-
   // Actualiza la canción actual
   const updateCurrentSong = (song) => {
     setCurrentSong(song);
@@ -47,10 +46,9 @@ export const PlaylistProvider = ({ children }) => {
       // Realiza la solicitud para guardar la canción en el historial
       const saveHistory = async () => {
         try {
-          await axios.post("http://localhost:8000/historial/", {
-            codigo_usuario: user.codigo_usuario, // Usar el id del usuario desde el contexto
+          await axios.post("http://localhost:8000/historial", {
+            codigo_usuario: localStorage.getItem("aristo"), // Usar el id del usuario desde el contexto
             codigo_cancion: currentSong.codigo_cancion,
-            fecha: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
           });
           console.log("Historial guardado correctamente");
         } catch (error) {
@@ -60,7 +58,7 @@ export const PlaylistProvider = ({ children }) => {
       
       saveHistory();
     }
-  }, [currentSong, user]); // Solo se ejecutará cuando `currentSong` cambie y haya un usuario
+  }, [currentSong, user]); // Solo se ejecutará cuando currentSong cambie y haya un usuario
 
   return (
     <PlaylistContext.Provider

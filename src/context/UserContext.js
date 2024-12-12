@@ -18,3 +18,8 @@ export const UserProvider = ({ children }) => {
 export const useUser = () => {
   return useContext(UserContext);
 };
+
+export const useUserId = () => {
+  const { user } = useUser();
+  return user?.id; // Retorna solo el ID del usuario
+};

@@ -3,6 +3,8 @@ import { FaSearch, FaBell } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext"; // Asegúrate de importar el contexto
 
+  
+
 const styles = {
   navbar: {
     background: "#000000",
