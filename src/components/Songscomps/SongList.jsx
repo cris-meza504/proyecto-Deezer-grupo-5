@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { usePlaylist } from "../../context/PlaylistContext"; // Importar el contexto
 
 function SongList() {
   const { searchQuery } = useParams(); // Obtener el término de búsqueda desde la URL
   const [songs, setSongs] = useState([]); // Estado para almacenar las canciones
   const [loading, setLoading] = useState(true); // Estado para indicar carga
   const [error, setError] = useState(""); // Estado para manejar errores
+
+  const { updateCurrentSong, updatePlaylist } = usePlaylist(); // Obtener funciones del contexto
 
   useEffect(() => {
     // Función para obtener las canciones del backend
@@ -23,6 +26,8 @@ function SongList() {
         // Hacer la solicitud al backend
         const response = await axios.get(url);
 
+        console.log("Fetched songs:", response.data.songs); // Ver los resultados en consola
+
         // Actualizar el estado con las canciones obtenidas
         setSongs(response.data.songs || []); // Asume que el backend devuelve un objeto con un campo "songs"
       } catch (err) {
@@ -35,6 +40,13 @@ function SongList() {
 
     fetchSongs(); // Llamar a la función para obtener las canciones
   }, [searchQuery]); // Ejecutar cuando cambie el término de búsqueda
+
+  // Función para manejar la selección de una canción
+  const handleSongSelect = (song) => {
+    console.log("Song clicked:", song); // Asegúrate de que se está ejecutando
+    updateCurrentSong(song); // Actualiza la canción actual
+    updatePlaylist(songs); // Actualiza la playlist con los resultados de búsqueda
+  };
 
   return (
     <div className="bg-black text-white flex-grow px-4 py-2">
@@ -62,7 +74,11 @@ function SongList() {
           <tbody>
             {songs.length > 0 ? (
               songs.map((song) => (
-                <tr key={song.id} className="hover:bg-gray-800">
+                <tr
+                  key={song.id}
+                  className="hover:bg-gray-800 cursor-pointer"
+                  onClick={() => handleSongSelect(song)} // Manejar selección
+                >
                   <td className="p-2 flex items-center">
                     <img
                       src={song.cover_url}

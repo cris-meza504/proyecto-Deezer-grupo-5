@@ -23,7 +23,7 @@ const LoginComponent = () => {
   
       if (response.status === 200) {
         console.log("Datos de usuario:", response.data); // Esto debería mostrar el objeto con id, nombre, y url_foto_perfil
-        localStorage.setItem("aristo", response.data.id);
+        localStorage.setItem("userId", response.data.id);
         setUser(response.data); // Guardar los datos en el contexto global
         navigate("/app/HomePage"); // Redirigir
       }

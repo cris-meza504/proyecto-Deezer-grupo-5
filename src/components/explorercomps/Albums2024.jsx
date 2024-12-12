@@ -1,184 +1,109 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import { usePlaylist } from "../../context/PlaylistContext"; // Importar el contexto
 
-const Albums2024 = () => {
-  const [albums, setAlbums] = useState([]);
-  const [hovered, setHovered] = useState(null);
-  const [liked, setLiked] = useState([]);
-  const { updatePlaylist, updateCurrentSong } = usePlaylist();  // Usar el contexto para actualizar la playlist y la canción actual
+function SongList() {
+  const { searchQuery } = useParams(); // Obtener el término de búsqueda desde la URL
+  const [songs, setSongs] = useState([]); // Estado para almacenar las canciones
+  const [loading, setLoading] = useState(true); // Estado para indicar carga
+  const [error, setError] = useState(""); // Estado para manejar errores
+
+  const { updateCurrentSong, updatePlaylist } = usePlaylist(); // Usar el contexto para actualizar la canción actual y la playlist
 
   useEffect(() => {
-    // Solicitar los datos al backend
-    const fetchAlbums = async () => {
+    // Función para obtener las canciones del backend
+    const fetchSongs = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/top-albumes-reproducidos");
-        setAlbums(response.data);
-        setLiked(Array(response.data.length).fill(false)); // Inicializar el estado de "likes"
-      } catch (error) {
-        console.error("Error fetching albums:", error);
+        setLoading(true); // Iniciar carga
+        setError(""); // Limpiar errores previos
+
+        // Construir la URL con el término de búsqueda
+        const url = searchQuery
+          ? `http://127.0.0.1:8000/searching?search=${encodeURIComponent(searchQuery)}`
+          : `http://127.0.0.1:8000/searching`;
+
+        // Hacer la solicitud al backend
+        const response = await axios.get(url);
+
+        // Actualizar el estado con las canciones obtenidas
+        setSongs(response.data.songs || []); // Asume que el backend devuelve un objeto con un campo "songs"
+      } catch (err) {
+        // Manejar errores de la solicitud
+        setError("Hubo un error al cargar las canciones. Inténtalo de nuevo.");
+      } finally {
+        setLoading(false); // Finalizar carga
       }
     };
-    fetchAlbums();
-  }, []);
 
-  const toggleLike = (index) => {
-    const updatedLikes = [...liked];
-    updatedLikes[index] = !updatedLikes[index];
-    setLiked(updatedLikes);
-  };
+    fetchSongs(); // Llamar a la función para obtener las canciones
+  }, [searchQuery]); // Ejecutar cuando cambie el término de búsqueda
 
-  // Función para manejar el clic en el botón de reproducción
-  const handlePlay = (albumId) => {
-    // Obtener las canciones del álbum
-    axios
-      .get(`http://127.0.0.1:8000/album-songs/${albumId}`)  // Endpoint para obtener las canciones del álbum
-      .then((response) => {
-        const songs = response.data;  // Lista de canciones
-        updatePlaylist(songs);         // Actualizar la lista de reproducción global
-
-        // Seleccionar la primera canción del álbum para reproducir
-        if (songs && songs.length > 0) {
-          updateCurrentSong(songs[0]); // Establecer la canción actual
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching album songs:", error);
-      });
+  // Función para manejar el clic en una canción
+  const handlePlaySong = (song) => {
+    updatePlaylist(songs); // Actualizar la playlist global con las canciones encontradas
+    updateCurrentSong(song); // Establecer la canción actual
   };
 
   return (
-    <div style={styles.categoryContainer}>
-      <h2 style={styles.categoryTitle}>Álbumes que marcaron el 2024</h2>
-      <div style={styles.squaresContainer}>
-        {albums.map((album, index) => (
-          <div key={album.codigo_album} style={styles.squareItem}>
-            <div
-              style={{
-                ...styles.square,
-                backgroundImage: `url(${process.env.PUBLIC_URL + album.url_portada})`,
-                filter: hovered === index ? "brightness(75%)" : "brightness(100%)",
-              }}
-              onMouseEnter={() => setHovered(index)}
-              onMouseLeave={() => setHovered(null)}
-            >
-              {hovered === index && (
-                <div style={styles.buttonsContainer}>
-                  <button
-                    style={styles.playButton}
-                    onClick={() => handlePlay(album.codigo_album)}  // Llamada al handlePlay
-                  >
-                    ▶
-                  </button>
-                  <button
-                    style={{
-                      ...styles.likeButton,
-                      color: liked[index] ? "#B560FF" : "#000000",
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation(); // Evita que el evento afecte al hover
-                      toggleLike(index);
-                    }}
-                  >
-                    ♥
-                  </button>
-                </div>
-              )}
-            </div>
-            <div style={styles.albumInfo}>
-              <div style={styles.albumName}>{album.titulo}</div>
-              <div style={styles.albumArtist}>{album.nombre_artista}</div>
-              <div style={styles.albumReleaseDate}>{album.fecha_lanzamiento}</div>
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className="bg-black text-white flex-grow px-4 py-2">
+      <h1 className="text-xl mb-4">
+        {searchQuery ? `Resultados para: "${searchQuery}"` : "Todas las Canciones"}
+      </h1>
+
+      {/* Mostrar estado de carga */}
+      {loading && <p>Cargando canciones...</p>}
+
+      {/* Mostrar errores */}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      {/* Mostrar la tabla de canciones */}
+      {!loading && !error && (
+        <table className="w-full text-left">
+          <thead>
+            <tr>
+              <th className="p-2">Canción</th>
+              <th className="p-2">Artista</th>
+              <th className="p-2">Álbum</th>
+              <th className="p-2">Duración</th>
+            </tr>
+          </thead>
+          <tbody>
+            {songs.length > 0 ? (
+              songs.map((song) => (
+                <tr
+                  key={song.codigo_cancion}
+                  className="hover:bg-gray-800 cursor-pointer"
+                  onClick={() => handlePlaySong(song)} // Llamar a handlePlaySong cuando se hace clic en la canción
+                >
+                  <td className="p-2 flex items-center">
+                    <img
+                      src={song.url_foto_portada || '/images/default-song.png'}
+                      alt={song.titulo}
+                      className="w-10 h-10 mr-2"
+                    />
+                    {song.titulo}
+                  </td>
+                  <td className="p-2">{song.nombre_artista}</td>
+                  <td className="p-2">{song.album}</td>
+                  <td className="p-2">
+                    {/* Asegurarse de que la duración sea un número válido antes de llamar a toFixed */}
+                    {song.duracion && !isNaN(song.duracion) ? song.duracion.toFixed(2) : "N/A"} mins
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" className="text-center p-4">
+                  No se encontraron resultados para "{searchQuery}"
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      )}
     </div>
   );
-};
+}
 
-const styles = {
-  categoryContainer: {
-    padding: "20px",
-    color: "#fff",
-  },
-  categoryTitle: {
-    fontSize: "24px",
-    fontWeight: "bold",
-    marginBottom: "20px",
-  },
-  squaresContainer: {
-    display: "flex",
-    flexWrap: "wrap",
-    gap: "20px",
-  },
-  squareItem: {
-    width: "250px",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  square: {
-    width: "100%",
-    height: "250px",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    borderRadius: "10px",
-    transition: "filter 0.3s ease",
-    position: "relative",
-  },
-  buttonsContainer: {
-    position: "absolute",
-    bottom: "10px",
-    display: "flex",
-    gap: "10px",
-    justifyContent: "center",
-    width: "100%",
-  },
-  playButton: {
-    fontSize: "18px",
-    backgroundColor: "#FFFFFF",
-    color: "#000000",
-    border: "none",
-    width: "40px",
-    height: "40px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: "50%",
-    cursor: "pointer",
-  },
-  likeButton: {
-    fontSize: "27px",
-    backgroundColor: "#FFFFFF",
-    color: "#000000",
-    border: "none",
-    width: "40px",
-    height: "40px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: "50%",
-    cursor: "pointer",
-  },
-  albumInfo: {
-    marginTop: "10px",
-    textAlign: "center",
-    lineHeight: "1.5",
-  },
-  albumName: {
-    fontSize: "16px",
-    fontWeight: "bold",
-    marginBottom: "5px",
-  },
-  albumArtist: {
-    fontSize: "14px",
-    color: "#a9a6aa",
-  },
-  albumReleaseDate: {
-    fontSize: "12px",
-    color: "#7d7a80",
-  },
-};
-
-export default Albums2024;
+export default SongList;
