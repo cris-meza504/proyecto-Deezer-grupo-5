@@ -12,7 +12,6 @@ root.render(
     <PlaylistProvider>
     <App />
     </PlaylistProvider>
-    
   </UserProvider>,
   document.getElementById("root")
 );
